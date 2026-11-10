@@ -1,0 +1,47 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "predev": "npm run build",
+    "dev": "tsx watch src/server.ts",
+    "build": "prisma generate --config prisma7.config.ts",
+    "prestart": "npm run build",
+    "start": "tsx src/server.ts",
+    "typecheck": "tsc --noEmit",
+    "migrate:deploy": "prisma migrate deploy --config prisma7.config.ts",
+    "seed": "prisma db seed --config prisma7.config.ts",
+    "evidence:concurrency": "tsx scripts/concurrency-test.ts",
+    "evidence:traffic": "tsx scripts/simulate-traffic.ts",
+    "evidence:reconcile": "tsx scripts/reconcile.ts",
+    "credit:remind": "tsx scripts/credit-remind.ts",
+    "test": "tsx --test --test-reporter=spec src/modules/toll/toll.test.ts src/modules/credit/credit-settlement.test.ts src/modules/toll/plaza-scope.test.ts src/modules/reports/reconciliation.test.ts src/modules/toll/credit.test.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.5",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.1",
+    "tsx": "^4.23.15",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^26.6.4",
+    "@types/pg": "^8.23.1",
+    "prisma": "^7.10.0",
+    "typescript": "^7.0.2"
+  }
+}

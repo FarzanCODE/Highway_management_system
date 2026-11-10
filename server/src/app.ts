@@ -1,0 +1,48 @@
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import { env } from "./config/env.js";
+import { prisma } from "./config/database.js";
+import { requestId } from "./middleware/request-id.middleware.js";
+import { errorHandler, notFound } from "./middleware/error.middleware.js";
+import { authRouter } from "./modules/auth/auth.routes.js";
+import { vehicleRouter } from "./modules/vehicles/vehicle.routes.js";
+import { walletRouter } from "./modules/wallet/wallet.routes.js";
+import { plazaRouter } from "./modules/plazas/plaza.routes.js";
+import { tollRouter } from "./modules/toll/toll.routes.js";
+import { notificationRouter } from "./modules/notifications/notification.routes.js";
+import { userRouter } from "./modules/users/user.routes.js";
+import { dashboardRouter } from "./modules/dashboard/dashboard.routes.js";
+import { reportRouter } from "./modules/reports/report.routes.js";
+import { creditRouter } from "./modules/credit/credit.routes.js";
+
+export const app = express();
+
+const allowedOrigins = env.CLIENT_ORIGIN.split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+app.use(requestId);
+app.use(helmet());
+app.use(cors({ origin: allowedOrigins }));
+app.use(express.json());
+
+app.get("/api/v1/health", async (_req, res) => {
+  await prisma.$queryRaw`SELECT 1`;
+  res.json({ success: true, message: "OK", data: { db: "connected" } });
+});
+
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/vehicles", vehicleRouter);
+app.use("/api/v1/wallet", walletRouter);
+app.use("/api/v1/plazas", plazaRouter);
+app.use("/api/v1/toll-transactions", tollRouter);
+app.use("/api/v1/notifications", notificationRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/dashboard", dashboardRouter);
+app.use("/api/v1/reports", reportRouter);
+app.use("/api/v1/credit", creditRouter);
+
+// Must stay last
+app.use(notFound);
+app.use(errorHandler);
